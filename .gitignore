@@ -1,4 +1,5 @@
 .env
+rest.http
 
 # compiled output
 /dist
