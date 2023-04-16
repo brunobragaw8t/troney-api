@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 
@@ -7,10 +11,16 @@ export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async register(registerDto: RegisterDto) {
-    // TODO: Verofy if user already exists
-
     if (registerDto.password !== registerDto.repassword) {
       throw new BadRequestException('Passwords do not match.');
+    }
+
+    const correspondingUsers = await this.usersService.findAll({
+      email: registerDto.email,
+    });
+
+    if (0 !== correspondingUsers.length) {
+      throw new ConflictException('Email address is already registered.');
     }
 
     return await this.usersService.create({
