@@ -2,14 +2,20 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
     if (registerDto.password !== registerDto.repassword) {
@@ -32,5 +38,29 @@ export class AuthService {
       password: hash,
       name: registerDto.name,
     });
+  }
+
+  async login(loginDto: LoginDto) {
+    const correspondingUsers = await this.usersService.findAll({
+      email: loginDto.email,
+    });
+
+    if (
+      0 === correspondingUsers.length ||
+      !(await bcrypt.compare(loginDto.password, correspondingUsers[0].password))
+    ) {
+      throw new UnauthorizedException('Incorrect email and/or password');
+    }
+
+    return {
+      accessToken: await this.jwtService.signAsync(
+        {
+          sub: correspondingUsers[0]._id,
+          email: correspondingUsers[0].email,
+          name: correspondingUsers[0].name,
+        },
+        { secret: process.env.JWT_SECRET, expiresIn: '1h' },
+      ),
+    };
   }
 }
