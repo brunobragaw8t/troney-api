@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 
@@ -8,7 +8,10 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     // TODO: Verofy if user already exists
-    // TODO: Verify if passwords match
+
+    if (registerDto.password !== registerDto.repassword) {
+      throw new BadRequestException('Passwords do not match.');
+    }
 
     return await this.usersService.create({
       email: registerDto.email,
