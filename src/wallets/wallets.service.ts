@@ -18,7 +18,15 @@ export class WalletsService {
     }).save();
   }
 
+  async find(id: string, user: UserDto) {
+    return await this.walletModel.findOne({ _id: id, userId: user.sub }).exec();
+  }
+
   async findAll(user: UserDto) {
     return await this.walletModel.find({ userId: user.sub }).exec();
+  }
+
+  async delete(id: string) {
+    return await this.walletModel.findByIdAndDelete(id).exec();
   }
 }

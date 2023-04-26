@@ -1,10 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  NotFoundException,
   Post,
   Request,
   UseGuards,
+  HttpCode,
+  Param,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserDto } from 'src/users/dto/user.dto';
@@ -28,5 +33,18 @@ export class WalletsController {
   @Get()
   async findAll(@Request() req: { user: UserDto }) {
     return await this.walletsService.findAll(req.user);
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  async delete(@Param('id') id: string, @Request() req: { user: UserDto }) {
+    const wallet = await this.walletsService.find(id, req.user);
+
+    if (!wallet) {
+      throw new NotFoundException();
+    }
+
+    return await this.walletsService.delete(id);
   }
 }
