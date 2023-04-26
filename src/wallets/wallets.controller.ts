@@ -1,5 +1,6 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { UserDto } from 'src/users/dto/user.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { WalletsService } from './wallets.service';
 
@@ -9,7 +10,10 @@ export class WalletsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() createWalletDto: CreateWalletDto) {
-    return await this.walletsService.create(createWalletDto);
+  async create(
+    @Body() createWalletDto: CreateWalletDto,
+    @Request() req: { user: UserDto },
+  ) {
+    return await this.walletsService.create(createWalletDto, req.user);
   }
 }
