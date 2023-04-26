@@ -17,4 +17,8 @@ export class WalletsService {
       userId: user.sub,
     }).save();
   }
+
+  async findAll(user: UserDto) {
+    return await this.walletModel.find({ userId: user.sub }).exec();
+  }
 }
