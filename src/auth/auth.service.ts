@@ -5,11 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterUserDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserDto } from 'src/users/dto/user.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -18,26 +19,22 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto) {
-    if (registerDto.password !== registerDto.repassword) {
+  async registerUser(body: RegisterUserDto): Promise<User> {
+    if (body.password !== body.repassword) {
       throw new BadRequestException('Passwords do not match.');
     }
 
-    const correspondingUsers = await this.usersService.findAll({
-      email: registerDto.email,
-    });
-
-    if (0 !== correspondingUsers.length) {
+    if (await this.usersService.findByEmail(body.email)) {
       throw new ConflictException('Email address is already registered.');
     }
 
     const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(registerDto.password, salt);
+    const hash = await bcrypt.hash(body.password, salt);
 
     return await this.usersService.create({
-      email: registerDto.email,
+      email: body.email,
       password: hash,
-      name: registerDto.name,
+      name: body.name,
     });
   }
 
