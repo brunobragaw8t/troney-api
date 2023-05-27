@@ -1,5 +1,10 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiNoContentResponse,
+  ApiConflictResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -9,7 +14,9 @@ import { RegisterUserDto } from './dto/register-user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiResponse({ status: 204 })
+  @ApiOperation({ summary: 'Register a user' })
+  @ApiNoContentResponse({ description: 'Successful registration' })
+  @ApiConflictResponse({ description: 'Email already registered' })
   @Post('register')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() body: RegisterUserDto) {
