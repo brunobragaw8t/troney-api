@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   async create(body: CreateUserDto) {
-    return await new this.userModel(body).save();
+    return await this.userModel.create(body);
   }
 
   async findByEmail(email: string): Promise<User> {
