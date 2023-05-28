@@ -21,6 +21,11 @@ async function bootstrap() {
       app,
       new DocumentBuilder().setTitle('Troney').addBearerAuth().build(),
     ),
+    {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    },
   );
 
   app.enableCors();
