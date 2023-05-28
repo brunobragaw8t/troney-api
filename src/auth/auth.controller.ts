@@ -4,6 +4,7 @@ import {
   ApiNoContentResponse,
   ApiConflictResponse,
   ApiOperation,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -16,6 +17,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Register a user' })
   @ApiNoContentResponse({ description: 'Successful registration' })
+  @ApiBadRequestResponse({ description: 'Validation error' })
   @ApiConflictResponse({ description: 'Email already registered' })
   @Post('register')
   @HttpCode(HttpStatus.NO_CONTENT)
