@@ -7,10 +7,11 @@ import {
 import { UsersService } from 'src/users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UserDto } from 'src/users/dto/user.dto';
 import { User } from 'src/users/entities/user.entity';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UserPayloadDto } from './dto/user-payload.dto';
+import { LoginUserResponseDto } from './dto/login-user-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,28 +39,24 @@ export class AuthService {
     });
   }
 
-  async login(loginDto: LoginDto) {
-    const correspondingUsers = await this.usersService.findAll({
-      email: loginDto.email,
-    });
+  async loginUser(body: LoginUserDto): Promise<LoginUserResponseDto> {
+    const user = await this.usersService.findByEmail(body.email);
 
-    if (
-      0 === correspondingUsers.length ||
-      !(await bcrypt.compare(loginDto.password, correspondingUsers[0].password))
-    ) {
+    if (!user || !(await bcrypt.compare(body.password, user.password))) {
       throw new UnauthorizedException('Incorrect email and/or password');
     }
 
-    const payload: UserDto = {
-      sub: correspondingUsers[0]._id,
-      email: correspondingUsers[0].email,
-      name: correspondingUsers[0].name,
+    const payload: UserPayloadDto = {
+      id: user._id,
+      email: user.email,
+      name: user.name,
     };
 
     return {
       accessToken: await this.jwtService.signAsync(payload, {
         secret: process.env.JWT_SECRET,
         expiresIn: '1h',
+        subject: user._id.toString(),
       }),
     };
   }

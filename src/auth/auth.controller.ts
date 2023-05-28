@@ -5,9 +5,10 @@ import {
   ApiConflictResponse,
   ApiOperation,
   ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @ApiTags('Authentication')
@@ -25,8 +26,11 @@ export class AuthController {
     return await this.authService.registerUser(body);
   }
 
+  @ApiOperation({ summary: 'Send login request' })
+  @ApiUnauthorizedResponse({ description: 'Incorrect email and/or password' })
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return await this.authService.login(loginDto);
+  @HttpCode(HttpStatus.OK)
+  async loginUser(@Body() body: LoginUserDto) {
+    return await this.authService.loginUser(body);
   }
 }
