@@ -4,14 +4,14 @@ import { User } from 'src/users/entities/user.entity';
 
 @Schema()
 export class Wallet extends mongoose.Document {
-  @Prop()
+  @Prop({ required: true, type: String })
   name: string;
 
-  @Prop()
+  @Prop({ required: true, type: Number })
   startingBalance: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: User;
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user: User;
 }
 
 export const WalletSchema = SchemaFactory.createForClass(Wallet);
