@@ -50,18 +50,16 @@ export class WalletsController {
     return await this.walletsService.create(body);
   }
 
-  @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Request() req: { user: UserDto }) {
+  async findAll(@Request() req: { user: UserPayloadDto }) {
     return await this.walletsService.findAll(req.user);
   }
 
-  @UseGuards(AuthGuard)
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateWalletDto: UpdateWalletDto,
-    @Request() req: { user: UserDto },
+    @Request() req: { user: UserPayloadDto },
   ) {
     const wallet = await this.walletsService.find(id, req.user);
 
@@ -72,10 +70,12 @@ export class WalletsController {
     return await this.walletsService.update(id, updateWalletDto);
   }
 
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  async delete(@Param('id') id: string, @Request() req: { user: UserDto }) {
+  async delete(
+    @Param('id') id: string,
+    @Request() req: { user: UserPayloadDto },
+  ) {
     const wallet = await this.walletsService.find(id, req.user);
 
     if (!wallet) {

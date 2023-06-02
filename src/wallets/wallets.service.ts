@@ -1,11 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  NotImplementedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDto } from 'src/users/dto/user.dto';
+import { UserPayloadDto } from 'src/auth/dto/user-payload.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { Wallet } from './entities/wallet.entity';
@@ -20,12 +16,12 @@ export class WalletsService {
     return await this.walletModel.create(body);
   }
 
-  async find(id: string, user: UserDto) {
-    return await this.walletModel.findOne({ _id: id, userId: user.sub }).exec();
+  async find(id: string, user: UserPayloadDto) {
+    return await this.walletModel.findOne({ _id: id, userId: user.id }).exec();
   }
 
-  async findAll(user: UserDto) {
-    return await this.walletModel.find({ userId: user.sub }).exec();
+  async findAll(user: UserPayloadDto) {
+    return await this.walletModel.find({ userId: user.id }).exec();
   }
 
   async update(id: string, updateWalletDto: UpdateWalletDto) {
