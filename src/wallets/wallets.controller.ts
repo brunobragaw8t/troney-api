@@ -15,6 +15,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -23,6 +24,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UserPayloadDto } from 'src/auth/dto/user-payload.dto';
 import { CreateWalletRequestDto } from './dto/create-wallet-request.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
+import { GetWalletQueryDto } from './dto/get-wallet-query.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletsService } from './wallets.service';
 
@@ -48,6 +50,18 @@ export class WalletsController {
     };
 
     return await this.walletsService.create(body);
+  }
+
+  @ApiOperation({ summary: 'Get a wallet' })
+  @ApiUnauthorizedResponse({ description: 'Invalid authorization' })
+  @ApiBadRequestResponse({ description: 'Validation error' })
+  @ApiNotFoundResponse({ description: 'Wallet not found' })
+  @Get(':id')
+  async find(
+    @Param() params: GetWalletQueryDto,
+    @Request() req: { user: UserPayloadDto },
+  ) {
+    return await this.walletsService.find(params.id, req.user);
   }
 
   @Get()

@@ -16,8 +16,16 @@ export class WalletsService {
     return await this.walletModel.create(body);
   }
 
-  async find(id: string, user: UserPayloadDto) {
-    return await this.walletModel.findOne({ _id: id, userId: user.id }).exec();
+  async find(id: string, user: UserPayloadDto): Promise<Wallet> {
+    const item = await this.walletModel
+      .findOne({ _id: id, user: user.id })
+      .exec();
+
+    if (!item) {
+      throw new NotFoundException(`Wallet ${id} not found.`);
+    }
+
+    return item;
   }
 
   async findAll(user: UserPayloadDto) {
