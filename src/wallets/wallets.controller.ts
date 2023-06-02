@@ -12,23 +12,42 @@ import {
   HttpStatus,
   Put,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { UserDto } from 'src/users/dto/user.dto';
+import { UserPayloadDto } from 'src/auth/dto/user-payload.dto';
+import { CreateWalletRequestDto } from './dto/create-wallet-request.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletsService } from './wallets.service';
 
+@ApiTags('Wallets')
+@ApiBearerAuth()
 @Controller('wallets')
+@UseGuards(AuthGuard)
 export class WalletsController {
   constructor(private readonly walletsService: WalletsService) {}
 
-  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Create a wallet' })
+  @ApiUnauthorizedResponse({ description: 'Invalid authorization' })
+  @ApiBadRequestResponse({ description: 'Validation error' })
   @Post()
   async create(
-    @Body() createWalletDto: CreateWalletDto,
-    @Request() req: { user: UserDto },
+    @Body() requestBody: CreateWalletRequestDto,
+    @Request() req: { user: UserPayloadDto },
   ) {
-    return await this.walletsService.create(createWalletDto, req.user);
+    const body: CreateWalletDto = {
+      name: requestBody.name,
+      startingBalance: requestBody.startingBalance,
+      user: req.user.id,
+    };
+
+    return await this.walletsService.create(body);
   }
 
   @UseGuards(AuthGuard)

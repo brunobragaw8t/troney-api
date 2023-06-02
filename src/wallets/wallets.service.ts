@@ -16,11 +16,8 @@ export class WalletsService {
     @InjectModel(Wallet.name) private readonly walletModel: Model<Wallet>,
   ) {}
 
-  async create(createWalletDto: CreateWalletDto, user: UserDto) {
-    return await new this.walletModel({
-      ...createWalletDto,
-      userId: user.sub,
-    }).save();
+  async create(body: CreateWalletDto): Promise<Wallet> {
+    return await this.walletModel.create(body);
   }
 
   async find(id: string, user: UserDto) {
