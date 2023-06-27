@@ -1,15 +1,19 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { RegisterUserCommand } from './register-user.command';
 import * as bcrypt from 'bcrypt';
+import { CreateUserCommand } from 'src/users/commands/create-user/create-user.command';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler
   implements ICommandHandler<RegisterUserCommand>
 {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly usersService: UsersService,
+  ) {}
 
   async execute(command: RegisterUserCommand): Promise<User> {
     if (command.password !== command.repassword) {
@@ -23,10 +27,8 @@ export class RegisterUserHandler
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(command.password, salt);
 
-    return await this.usersService.create({
-      email: command.email,
-      password: hash,
-      name: command.name,
-    });
+    return await this.commandBus.execute(
+      new CreateUserCommand(command.email, hash, command.name),
+    );
   }
 }
