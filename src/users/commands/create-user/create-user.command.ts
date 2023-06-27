@@ -1,7 +1,7 @@
 export class CreateUserCommand {
   constructor(
-    public email: string,
-    public password: string,
-    public name: string,
+    public readonly email: string,
+    public readonly password: string,
+    public readonly name: string,
   ) {}
 }
