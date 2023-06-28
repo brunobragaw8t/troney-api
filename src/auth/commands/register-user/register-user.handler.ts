@@ -1,18 +1,23 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
-import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import {
+  CommandBus,
+  CommandHandler,
+  ICommandHandler,
+  QueryBus,
+} from '@nestjs/cqrs';
 import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
 import { RegisterUserCommand } from './register-user.command';
 import * as bcrypt from 'bcrypt';
 import { CreateUserCommand } from 'src/users/commands/create-user/create-user.command';
+import { GetUserByEmailQuery } from 'src/users/commands/get-user-by-email/get-user-by-email.query';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler
   implements ICommandHandler<RegisterUserCommand>
 {
   constructor(
+    private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
-    private readonly usersService: UsersService,
   ) {}
 
   async execute(command: RegisterUserCommand): Promise<User> {
@@ -20,7 +25,11 @@ export class RegisterUserHandler
       throw new BadRequestException('Passwords do not match.');
     }
 
-    if (await this.usersService.findByEmail(command.email)) {
+    const user = await this.queryBus.execute<GetUserByEmailQuery, User>(
+      new GetUserByEmailQuery(command.email),
+    );
+
+    if (user) {
       throw new ConflictException('Email address is already registered.');
     }
 
