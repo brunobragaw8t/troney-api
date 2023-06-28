@@ -27,7 +27,7 @@ export class RegisterUserHandler
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(command.password, salt);
 
-    return await this.commandBus.execute(
+    return await this.commandBus.execute<CreateUserCommand, User>(
       new CreateUserCommand(command.email, hash, command.name),
     );
   }
