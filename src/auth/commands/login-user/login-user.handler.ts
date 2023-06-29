@@ -24,7 +24,11 @@ export class LoginUserHandler implements ICommandHandler<LoginUserCommand> {
       throw new UnauthorizedException('Incorrect email and/or password');
     }
 
-    const payload = new UserPayloadDto(user._id, user.email, user.name);
+    const payload: UserPayloadDto = {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+    };
 
     return {
       accessToken: await this.jwtService.signAsync(payload, {
