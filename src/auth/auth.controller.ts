@@ -9,18 +9,16 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
-import { AuthService } from './auth.service';
+import { LoginUserCommand } from './commands/login-user/login-user.command';
 import { RegisterUserCommand } from './commands/register-user/register-user.command';
+import { LoginUserResponseDto } from './dto/login-user-response.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly commandBus: CommandBus,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @ApiOperation({ summary: 'Register a user' })
   @ApiNoContentResponse({ description: 'Successful registration' })
@@ -44,6 +42,9 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async loginUser(@Body() body: LoginUserDto) {
-    return await this.authService.loginUser(body);
+    return await this.commandBus.execute<
+      LoginUserCommand,
+      LoginUserResponseDto
+    >(new LoginUserCommand(body.email, body.password));
   }
 }
