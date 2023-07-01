@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/users/entities/user.entity';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Wallet extends mongoose.Document {
   @Prop({ required: true, type: String })
   name: string;
