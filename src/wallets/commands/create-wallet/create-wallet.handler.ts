@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { WalletsRepository } from 'src/wallets/wallets.repository';
+import { CreateWalletResponseDto } from './create-wallet-response.dto';
 import { CreateWalletCommand } from './create-wallet.command';
-import { CreateWalletResponseDto } from './create-wallet.response';
 
 @CommandHandler(CreateWalletCommand)
 export class CreateWalletHandler
