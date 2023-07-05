@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateWalletCommand } from './commands/create-wallet/create-wallet.command';
 import { Wallet } from './entities/wallet.entity';
+import { GetWalletQuery } from './queries/get-wallet/get-wallet.query';
 
 @Injectable()
 export class WalletsRepository {
@@ -12,5 +13,12 @@ export class WalletsRepository {
 
   async create(command: CreateWalletCommand): Promise<Wallet> {
     return await this.walletModel.create(command);
+  }
+
+  async find(query: GetWalletQuery): Promise<Wallet> {
+    return await this.walletModel.findOne({
+      _id: query.id,
+      user: query.userId,
+    });
   }
 }
