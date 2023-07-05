@@ -27,6 +27,7 @@ import { CreateWalletResponseDto } from './commands/create-wallet/create-wallet-
 import { CreateWalletCommand } from './commands/create-wallet/create-wallet.command';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { GetWalletQueryDto } from './dto/get-wallet-query.dto';
+import { GetWalletParamsDto } from './dto/get-wallet/get-wallet-params.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { WalletsService } from './wallets.service';
 
@@ -60,7 +61,7 @@ export class WalletsController {
   @ApiNotFoundResponse({ description: 'Wallet not found' })
   @Get(':id')
   async find(
-    @Param() params: GetWalletQueryDto,
+    @Param() params: GetWalletParamsDto,
     @Request() req: { user: UserPayloadDto },
   ) {
     return await this.walletsService.find(params.id, req.user);
