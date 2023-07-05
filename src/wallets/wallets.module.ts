@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from 'src/auth/auth.module';
 import { CreateWalletHandler } from './commands/create-wallet/create-wallet.handler';
 import { Wallet, WalletSchema } from './entities/wallet.entity';
+import { GetWalletHandler } from './queries/get-wallet/get-wallet.handler';
 import { WalletsController } from './wallets.controller';
 import { WalletsRepository } from './wallets.repository';
 import { WalletsService } from './wallets.service';
@@ -17,6 +18,11 @@ import { WalletsService } from './wallets.service';
     CqrsModule,
   ],
   controllers: [WalletsController],
-  providers: [CreateWalletHandler, WalletsRepository, WalletsService],
+  providers: [
+    CreateWalletHandler,
+    GetWalletHandler,
+    WalletsRepository,
+    WalletsService,
+  ],
 })
 export class WalletsModule {}

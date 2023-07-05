@@ -12,7 +12,7 @@ import {
   HttpStatus,
   Put,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -28,7 +28,10 @@ import { CreateWalletCommand } from './commands/create-wallet/create-wallet.comm
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { GetWalletQueryDto } from './dto/get-wallet-query.dto';
 import { GetWalletParamsDto } from './dto/get-wallet/get-wallet-params.dto';
+import { GetWalletResponseDto } from './dto/get-wallet/get-wallet-response.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { Wallet } from './entities/wallet.entity';
+import { GetWalletQuery } from './queries/get-wallet/get-wallet.query';
 import { WalletsService } from './wallets.service';
 
 @ApiTags('Wallets')
@@ -37,6 +40,7 @@ import { WalletsService } from './wallets.service';
 @UseGuards(AuthGuard)
 export class WalletsController {
   constructor(
+    private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
     private readonly walletsService: WalletsService,
   ) {}
@@ -63,8 +67,16 @@ export class WalletsController {
   async find(
     @Param() params: GetWalletParamsDto,
     @Request() req: { user: UserPayloadDto },
-  ) {
-    return await this.walletsService.find(params.id, req.user);
+  ): Promise<GetWalletResponseDto> {
+    const wallet = await this.queryBus.execute<GetWalletQuery, Wallet>(
+      new GetWalletQuery(params.id, req.user.id),
+    );
+
+    return {
+      id: wallet.id,
+      name: wallet.name,
+      startingBalance: wallet.startingBalance,
+    };
   }
 
   @Get()
