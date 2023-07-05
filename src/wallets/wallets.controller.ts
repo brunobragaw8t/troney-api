@@ -26,7 +26,6 @@ import { UserPayloadDto } from 'src/auth/dto/user-payload.dto';
 import { CreateWalletResponseDto } from './commands/create-wallet/create-wallet-response.dto';
 import { CreateWalletCommand } from './commands/create-wallet/create-wallet.command';
 import { CreateWalletDto } from './dto/create-wallet.dto';
-import { GetWalletQueryDto } from './dto/get-wallet-query.dto';
 import { GetWalletParamsDto } from './dto/get-wallet/get-wallet-params.dto';
 import { GetWalletResponseDto } from './dto/get-wallet/get-wallet-response.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
