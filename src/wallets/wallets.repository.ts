@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateWalletCommand } from './commands/create-wallet/create-wallet.command';
 import { Wallet } from './entities/wallet.entity';
 import { GetWalletQuery } from './queries/get-wallet/get-wallet.query';
+import { GetWalletsQuery } from './queries/get-wallets/get-wallets.query';
 
 @Injectable()
 export class WalletsRepository {
@@ -13,6 +14,10 @@ export class WalletsRepository {
 
   async create(command: CreateWalletCommand): Promise<Wallet> {
     return await this.walletModel.create(command);
+  }
+
+  async findAll(query: GetWalletsQuery): Promise<Wallet[]> {
+    return await this.walletModel.find({ user: query.userId });
   }
 
   async find(query: GetWalletQuery): Promise<Wallet> {
