@@ -31,7 +31,14 @@ describe('UsersService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: {
-            find: jest.fn().mockResolvedValue(usersMock),
+            find: jest.fn().mockImplementation(({ where }) => {
+              if (where && where.email) {
+                return Promise.resolve(
+                  usersMock.filter((user) => user.email === where.email),
+                );
+              }
+              return Promise.resolve(usersMock);
+            }),
           },
         },
       ],
@@ -49,6 +56,14 @@ describe('UsersService', () => {
     it('should return array of users', async () => {
       const users = await service.findAll();
       expect(users).toEqual(usersMock);
+    });
+
+    it('should filter results by email', async () => {
+      const users = await service.findAll({ email: 'user1@email.com' });
+
+      expect(users).toEqual(
+        [...usersMock].filter((u) => 'user1@email.com' === u.email),
+      );
     });
   });
 });
