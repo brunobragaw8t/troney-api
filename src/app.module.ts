@@ -18,6 +18,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
         DB_NAME: Joi.string(),
         DB_USERNAME: Joi.string().default('root'),
         DB_PASSWORD: Joi.string().empty(''),
+        DB_SYNCHRONIZE: Joi.string().valid('true', 'false'),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -30,6 +31,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
         database: configService.get<string>('DB_NAME'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
+        synchronize: 'true' === configService.get<string>('DB_SYNCHRONIZE'),
       }),
     }),
     UsersModule,
