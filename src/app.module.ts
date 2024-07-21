@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import * as Joi from 'joi';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { User } from './users/aggregate/user.entity';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         synchronize: 'true' === configService.get<string>('DB_SYNCHRONIZE'),
+        entities: [User],
       }),
     }),
     UsersModule,
