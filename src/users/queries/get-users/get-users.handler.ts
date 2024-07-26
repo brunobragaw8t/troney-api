@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetUsersQuery } from './get-users.query';
 import { UserResponseDto } from 'src/users/dto/common/user-response.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../../users.service';
 
 @Injectable()
 @QueryHandler(GetUsersQuery)
@@ -12,6 +12,7 @@ export class GetUsersHandler
   constructor(private readonly service: UsersService) {}
 
   async execute(query: GetUsersQuery): Promise<UserResponseDto[]> {
-    return await this.service.findAll(query.filter);
+    const users = await this.service.findAll(query.filter);
+    return users.map((u) => this.service.mapToResponseDto(u));
   }
 }
