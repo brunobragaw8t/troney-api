@@ -26,6 +26,13 @@ export class UsersService {
     };
   }
 
+  /**
+   * Find all users
+   *
+   * @param filter (optional) Users' filter
+   *
+   * @returns Users
+   */
   async findAll(filter?: FindAllUsersFilter): Promise<User[]> {
     return await this.repo.find({ where: filter });
   }
