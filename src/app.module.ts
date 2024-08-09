@@ -9,6 +9,8 @@ import * as Joi from 'joi';
 import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { User } from './users/aggregate/user.entity';
+import { ActivationTokensModule } from './activation-tokens/activation-tokens.module';
+import { ActivationToken } from './activation-tokens/aggregate/activation-token.entity';
 
 @Module({
   imports: [
@@ -34,11 +36,12 @@ import { User } from './users/aggregate/user.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         synchronize: 'true' === configService.get<string>('DB_SYNCHRONIZE'),
-        entities: [User],
+        entities: [User, ActivationToken],
       }),
     }),
     UsersModule,
     AuthModule,
+    ActivationTokensModule,
   ],
   controllers: [AppController],
   providers: [
