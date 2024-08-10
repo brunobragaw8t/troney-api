@@ -3,7 +3,13 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UserResponseDto } from 'src/users/dto/common/user-response.dto';
 import { GetUsersQuery } from '../users/queries/get-users/get-users.query';
 import { RegisterDto } from './dto/register/register.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserCommand } from '../users/commands/create-user/create-user.command';
 
 @ApiTags('Auth')
@@ -15,6 +21,13 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @ApiOperation({ summary: 'Register user' })
+  @ApiConflictResponse({ description: 'Email already registered' })
+  @ApiInternalServerErrorResponse({ description: 'Unexpected error' })
+  @ApiCreatedResponse({
+    description: 'User registered successfully',
+    type: UserResponseDto,
+  })
   async register(@Body() body: RegisterDto): Promise<UserResponseDto> {
     const users = await this.queryBus.execute<GetUsersQuery, UserResponseDto[]>(
       new GetUsersQuery({ email: body.email }),
