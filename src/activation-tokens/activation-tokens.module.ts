@@ -7,6 +7,7 @@ import { ActivationTokensRepository } from './activation-tokens.repository';
 import { ActivationTokensService } from './activation-tokens.service';
 import { CreateAndSendActivationTokenOnUserCreationHandler } from './events/create-and-send-activation-token-on-user-creation.handler';
 import { ConfigModule } from '@nestjs/config';
+import { GetActivationTokenHandler } from './queries/get-activation-token/get-activation-token.handler';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
     ActivationTokensRepository,
     ActivationTokensService,
     CreateActivationTokenHandler,
+    GetActivationTokenHandler,
     CreateAndSendActivationTokenOnUserCreationHandler,
   ],
 })
