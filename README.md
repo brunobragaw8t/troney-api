@@ -21,6 +21,7 @@ registration
 - [ ] Send account activation email on user registration
 - [ ] Create route to activate user
 - [ ] Create route to login user by issuing a JWT
+- [ ] Create password recovery functionality
 - [ ] Create wallets CRUD
 - [ ] Create buckets CRUD
 - [ ] Create categories CRUD
