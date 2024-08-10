@@ -23,6 +23,11 @@ import { ActivationToken } from './activation-tokens/aggregate/activation-token.
         DB_USERNAME: Joi.string().default('root'),
         DB_PASSWORD: Joi.string().empty(''),
         DB_SYNCHRONIZE: Joi.string().valid('true', 'false'),
+        SMTP_HOST: Joi.string().hostname(),
+        SMTP_PORT: Joi.number().port().default(587),
+        SMTP_SECURE: Joi.string().valid('true', 'false'),
+        SMTP_AUTH_USER: Joi.string(),
+        SMTP_AUTH_PASS: Joi.string(),
       }),
     }),
     TypeOrmModule.forRootAsync({
