@@ -13,4 +13,7 @@ export class User {
 
   @Column()
   name: string;
+
+  @Column('timestamp', { default: null })
+  activatedAt: Date | null;
 }
