@@ -30,6 +30,8 @@ import { MailerModule } from './mailer/mailer.module';
         SMTP_SECURE: Joi.string().valid('true', 'false'),
         SMTP_AUTH_USER: Joi.string(),
         SMTP_AUTH_PASS: Joi.string(),
+        SMTP_FROM_NAME: Joi.string().required(),
+        SMTP_FROM_EMAIL: Joi.string().email().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
