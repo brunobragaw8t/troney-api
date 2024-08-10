@@ -27,8 +27,6 @@ export class CreateActivationTokenHandler
       );
     }
 
-    console.log('1 token', token);
-
     return this.service.mapToResponseDto(token);
   }
 }
