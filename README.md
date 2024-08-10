@@ -18,7 +18,7 @@ Some of its features are:
 registration
 - [x] Add activation flags to users table
 - [x] Create mailer module
-- [ ] Send account activation email on user registration
+- [x] Send account activation email on user registration
 - [ ] Create route to activate user
 - [ ] Create route to login user by issuing a JWT
 - [ ] Create password recovery functionality
