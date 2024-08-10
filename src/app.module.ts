@@ -11,6 +11,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { User } from './users/aggregate/user.entity';
 import { ActivationTokensModule } from './activation-tokens/activation-tokens.module';
 import { ActivationToken } from './activation-tokens/aggregate/activation-token.entity';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ActivationToken } from './activation-tokens/aggregate/activation-token.
     UsersModule,
     AuthModule,
     ActivationTokensModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [
