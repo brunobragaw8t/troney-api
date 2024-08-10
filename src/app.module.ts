@@ -18,6 +18,7 @@ import { MailerModule } from './mailer/mailer.module';
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         PORT: Joi.number().port().default(3000),
+        FRONTEND_BASE_URL: Joi.string().uri().required(),
         DB_HOST: Joi.string().hostname(),
         DB_PORT: Joi.number().port().default(3306),
         DB_NAME: Joi.string(),
