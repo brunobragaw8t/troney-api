@@ -14,6 +14,9 @@ export class User {
   @Column('varchar', { nullable: false })
   name: string;
 
+  @Column('timestamp', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
   @Column('timestamp', { nullable: true, default: null })
   activatedAt: Date | null;
 }
