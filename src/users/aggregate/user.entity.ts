@@ -5,15 +5,15 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column('varchar', { nullable: false, unique: true })
   email: string;
 
-  @Column()
+  @Column('varchar', { nullable: false })
   password: string;
 
-  @Column()
+  @Column('varchar', { nullable: false })
   name: string;
 
-  @Column('timestamp', { default: null })
+  @Column('timestamp', { nullable: true, default: null })
   activatedAt: Date | null;
 }

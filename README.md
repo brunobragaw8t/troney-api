@@ -16,7 +16,7 @@ Some of its features are:
 - [x] Create auth and users modules with user registration and creation
 - [x] Create activation tokens module with activation token creation on user
 registration
-- [ ] Add activation flags to users table
+- [x] Add activation flags to users table
 - [ ] Create mailer module
 - [ ] Send account activation email on user registration
 - [ ] Create route to activate user
