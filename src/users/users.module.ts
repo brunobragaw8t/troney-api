@@ -6,6 +6,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserHandler } from './commands/create-user/create-user.handler';
 import { GetUsersHandler } from './queries/get-users/get-users.handler';
 import { UsersRepository } from './users.repository';
+import { GetUserHandler } from './queries/get-user/get-user.handler';
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature([User])],
@@ -14,6 +15,7 @@ import { UsersRepository } from './users.repository';
     UsersService,
     CreateUserHandler,
     GetUsersHandler,
+    GetUserHandler,
   ],
 })
 export class UsersModule {}
