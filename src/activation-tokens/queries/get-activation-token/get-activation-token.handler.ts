@@ -4,6 +4,7 @@ import { GetActivationTokenQuery } from './get-activation-token.query';
 import { ActivationTokenResponseDto } from 'src/activation-tokens/dto/common/activation-token-response.dto';
 import { ActivationTokensRepository } from 'src/activation-tokens/activation-tokens.repository';
 import { ActivationTokensService } from 'src/activation-tokens/activation-tokens.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 @QueryHandler(GetActivationTokenQuery)
@@ -13,6 +14,7 @@ export class GetActivationTokenHandler
   constructor(
     private readonly repo: ActivationTokensRepository,
     private readonly service: ActivationTokensService,
+    private readonly configService: ConfigService,
   ) {}
 
   async execute(
@@ -26,6 +28,13 @@ export class GetActivationTokenHandler
       );
     }
 
-    return this.service.mapToResponseDto(token);
+    const frontendBaseUrl = this.configService.get<string>('FRONTEND_BASE_URL');
+
+    const activationLink = this.service.formActivationLink(
+      token.id,
+      frontendBaseUrl || '',
+    );
+
+    return this.service.mapToResponseDto(token, activationLink);
   }
 }

@@ -9,4 +9,7 @@ export class ActivationTokenResponseDto {
 
   @ApiProperty({ description: 'Creation timestamp' })
   readonly createdAt: Date;
+
+  @ApiProperty({ description: 'Activation link' })
+  readonly activationLink: string;
 }

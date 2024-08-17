@@ -8,16 +8,19 @@ export class ActivationTokensService {
    * Map ActivationToken entity to response DTO
    *
    * @param activationToken ActivationToken entity
+   * @param activationLink Activation link
    *
    * @returns Activation token's response DTO
    */
   mapToResponseDto(
     activationToken: ActivationToken,
+    activationLink: string,
   ): ActivationTokenResponseDto {
     return {
       id: activationToken.id,
       userId: activationToken.userId,
       createdAt: activationToken.createdAt,
+      activationLink,
     };
   }
 
