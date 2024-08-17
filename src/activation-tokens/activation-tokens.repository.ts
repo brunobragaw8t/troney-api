@@ -37,15 +37,4 @@ export class ActivationTokensRepository {
   async find(id: string): Promise<ActivationToken | null> {
     return await this.repo.findOneBy({ id });
   }
-
-  /**
-   * Find activation token by user ID
-   *
-   * @param userId Associated user's ID
-   *
-   * @returns Activation token on success, null on failure
-   */
-  async findByUser(userId: string): Promise<ActivationToken | null> {
-    return await this.repo.findOneBy({ userId });
-  }
 }
