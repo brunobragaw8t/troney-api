@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Post,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -25,6 +26,9 @@ import { GetActivationTokenQuery } from 'src/activation-tokens/queries/get-activ
 import { ActivationTokenResponseDto } from 'src/activation-tokens/dto/common/activation-token-response.dto';
 import { GetUserQuery } from 'src/users/queries/get-user/get-user.query';
 import { ActivateUserCommand } from 'src/users/commands/activate-user/activate-user.command';
+import { ResendActivationEmailDto } from './dto/resend-activation-email/resend-activation-email.dto';
+import { SendEmailCommand } from 'src/mailer/commands/send-email/send-email.command';
+import { GetActivationTokenByUserQuery } from 'src/activation-tokens/queries/get-activation-token-by-user/get-activation-token-by-user.query';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -78,6 +82,40 @@ export class AuthController {
 
     return await this.commandBus.execute<ActivateUserCommand, UserResponseDto>(
       new ActivateUserCommand(user.id),
+    );
+  }
+
+  @Post('resend-activation')
+  @ApiOperation({ summary: 'Resend activation email' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiConflictResponse({ description: 'User already activated' })
+  @ApiOkResponse({ description: 'Email sent successfully' })
+  @HttpCode(HttpStatus.OK)
+  async resendActivationEmail(
+    @Body() body: ResendActivationEmailDto,
+  ): Promise<void> {
+    const users = await this.queryBus.execute<GetUsersQuery, UserResponseDto[]>(
+      new GetUsersQuery({ email: body.email }),
+    );
+
+    if (users.length === 0) {
+      throw new NotFoundException(`User with email ${body.email} not found.`);
+    }
+
+    const activationToken = await this.queryBus.execute<
+      GetActivationTokenByUserQuery,
+      ActivationTokenResponseDto
+    >(new GetActivationTokenByUserQuery(users[0].id));
+
+    await this.commandBus.execute<SendEmailCommand>(
+      new SendEmailCommand(
+        users[0].email,
+        'Troney | Activate your account',
+        `Hi, ${users[0].name}.<br />
+        Your account was successfully created. Please click the following link to active it:<br />
+        <br />
+        <a href="${activationToken.activationLink}">${activationToken.activationLink}</a>`,
+      ),
     );
   }
 }
