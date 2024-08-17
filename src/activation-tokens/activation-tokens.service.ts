@@ -20,4 +20,19 @@ export class ActivationTokensService {
       createdAt: activationToken.createdAt,
     };
   }
+
+  /**
+   * Form activation link
+   *
+   * @param activationTokenId Activation token ID
+   * @param frontendBaseUrl Frontend base URL
+   *
+   * @returns Activation link
+   */
+  formActivationLink(
+    activationTokenId: string,
+    frontendBaseUrl: string,
+  ): string {
+    return `${frontendBaseUrl}/activate?t=${activationTokenId}`;
+  }
 }
