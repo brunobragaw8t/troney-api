@@ -9,4 +9,7 @@ export class UserResponseDto {
 
   @ApiProperty({ description: 'Name' })
   readonly name: string;
+
+  @ApiProperty({ description: 'Account activation date' })
+  readonly activatedAt: Date | null;
 }
