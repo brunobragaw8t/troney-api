@@ -33,7 +33,7 @@ export class UsersRepository {
    *
    * @param id User's ID
    *
-   * @returns User
+   * @returns User on success, null on failure
    */
   async find(id: string): Promise<User | null> {
     return await this.repo.findOneBy({ id });
