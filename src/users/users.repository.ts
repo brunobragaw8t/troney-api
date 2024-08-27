@@ -41,6 +41,17 @@ export class UsersRepository {
   }
 
   /**
+   * Find user by email
+   *
+   * @param email User's email
+   *
+   * @return User on success, null on failure
+   */
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.repo.findOneBy({ email });
+  }
+
+  /**
    * Find all users
    *
    * @param filter (optional) Users' filter
