@@ -8,6 +8,7 @@ import { GetUsersHandler } from './queries/get-users/get-users.handler';
 import { UsersRepository } from './users.repository';
 import { GetUserHandler } from './queries/get-user/get-user.handler';
 import { ActivateUserHandler } from './commands/activate-user/activate-user.handler';
+import { GetUserByCredentialsHandler } from './queries/get-user-by-credentials/get-user-by-credentials.handler';
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature([User])],
@@ -17,6 +18,7 @@ import { ActivateUserHandler } from './commands/activate-user/activate-user.hand
     CreateUserHandler,
     GetUsersHandler,
     GetUserHandler,
+    GetUserByCredentialsHandler,
     ActivateUserHandler,
   ],
 })

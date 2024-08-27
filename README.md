@@ -23,6 +23,7 @@ registration
 - [x] Create route to resend activation email
 - [ ] Create route to login user by issuing a JWT
 - [ ] Create password recovery functionality
+- [ ] Implement refresh token functionality
 - [ ] Create wallets CRUD
 - [ ] Create buckets CRUD
 - [ ] Create categories CRUD
