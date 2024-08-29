@@ -12,6 +12,7 @@ import { UserResponseDto } from 'src/users/dto/common/user-response.dto';
 import { GetUsersQuery } from '../users/queries/get-users/get-users.query';
 import { RegisterDto } from './dto/register/register.dto';
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -29,6 +30,9 @@ import { ActivateUserCommand } from 'src/users/commands/activate-user/activate-u
 import { ResendActivationEmailDto } from './dto/resend-activation-email/resend-activation-email.dto';
 import { SendEmailCommand } from 'src/mailer/commands/send-email/send-email.command';
 import { GetActivationTokenByUserQuery } from 'src/activation-tokens/queries/get-activation-token-by-user/get-activation-token-by-user.query';
+import { LoginDto } from './dto/login/login.dto';
+import { GetUserByCredentialsQuery } from 'src/users/queries/get-user-by-credentials/get-user-by-credentials.query';
+import { AuthService } from './auth.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -36,6 +40,7 @@ export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly service: AuthService,
   ) {}
 
   @Post('register')
@@ -117,5 +122,20 @@ export class AuthController {
         <a href="${activationToken.activationLink}">${activationToken.activationLink}</a>`,
       ),
     );
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiConflictResponse({ description: 'User not activated' })
+  @ApiBadRequestResponse({ description: 'Bad credentials' })
+  @ApiOkResponse({ description: 'Successful login' })
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() body: LoginDto): Promise<unknown> {
+    const user = await this.queryBus.execute<
+      GetUserByCredentialsQuery,
+      UserResponseDto
+    >(new GetUserByCredentialsQuery(body.email, body.password));
+
+    return await this.service.issueToken(user);
   }
 }
