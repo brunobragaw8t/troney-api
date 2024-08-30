@@ -21,7 +21,7 @@ registration
 - [x] Send account activation email on user registration
 - [x] Create route to activate user
 - [x] Create route to resend activation email
-- [ ] Create route to login user by issuing a JWT
+- [x] Create route to login user by issuing a JWT
 - [ ] Create password recovery functionality
 - [ ] Implement refresh token functionality
 - [ ] Create wallets CRUD
