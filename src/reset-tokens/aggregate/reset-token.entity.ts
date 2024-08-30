@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'recovery_tokens' })
-export class RecoveryToken {
+@Entity({ name: 'reset_tokens' })
+export class ResetToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
