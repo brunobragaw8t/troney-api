@@ -32,7 +32,9 @@ import { SendEmailCommand } from 'src/mailer/commands/send-email/send-email.comm
 import { GetActivationTokenByUserQuery } from 'src/activation-tokens/queries/get-activation-token-by-user/get-activation-token-by-user.query';
 import { LoginDto } from './dto/login/login.dto';
 import { GetUserByCredentialsQuery } from 'src/users/queries/get-user-by-credentials/get-user-by-credentials.query';
-import { AuthService } from './auth.service';
+import { LoginResponseDto } from './dto/login/login-response.dto';
+import { IssueAuthTokenCommand } from './commands/issue-auth-token.command';
+import { IssueAuthTokenResponseDto } from './dto/issue-auth-token/issue-auth-token-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -40,7 +42,6 @@ export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly service: AuthService,
   ) {}
 
   @Post('register')
@@ -130,12 +131,19 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Bad credentials' })
   @ApiOkResponse({ description: 'Successful login' })
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: LoginDto): Promise<unknown> {
+  async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     const user = await this.queryBus.execute<
       GetUserByCredentialsQuery,
       UserResponseDto
     >(new GetUserByCredentialsQuery(body.email, body.password));
 
-    return await this.service.issueToken(user);
+    const res = await this.commandBus.execute<
+      IssueAuthTokenCommand,
+      IssueAuthTokenResponseDto
+    >(new IssueAuthTokenCommand(user));
+
+    return {
+      token: res.token,
+    };
   }
 }
