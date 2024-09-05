@@ -35,6 +35,9 @@ import { GetUserByCredentialsQuery } from 'src/users/queries/get-user-by-credent
 import { LoginResponseDto } from './dto/login/login-response.dto';
 import { IssueAuthTokenCommand } from './commands/issue-auth-token.command';
 import { IssueAuthTokenResponseDto } from './dto/issue-auth-token/issue-auth-token-response.dto';
+import { ResetDto } from './dto/reset/reset.dto';
+import { CreateResetTokenCommand } from 'src/reset-tokens/commands/create-reset-token/create-reset-token.command';
+import { ResetTokenResponseDto } from 'src/reset-tokens/dto/common/reset-token-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -149,5 +152,37 @@ export class AuthController {
     return {
       token: res.token,
     };
+  }
+
+  @Post('reset')
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiConflictResponse({ description: 'User not activated' })
+  @ApiBadRequestResponse({ description: 'Bad credentials' })
+  @ApiOkResponse({ description: 'Successful login' })
+  @HttpCode(HttpStatus.OK)
+  async reset(@Body() body: ResetDto): Promise<void> {
+    const users = await this.queryBus.execute<GetUsersQuery, UserResponseDto[]>(
+      new GetUsersQuery({ email: body.email }),
+    );
+
+    if (users.length === 0) {
+      throw new NotFoundException(`User with email ${body.email} not found.`);
+    }
+
+    const token = await this.commandBus.execute<
+      CreateResetTokenCommand,
+      ResetTokenResponseDto
+    >(new CreateResetTokenCommand(users[0].id));
+
+    await this.commandBus.execute<SendEmailCommand>(
+      new SendEmailCommand(
+        users[0].email,
+        'Troney | Reset your password',
+        `Hi, ${users[0].name}.<br />
+        Please click the following link to reset your password:<br />
+        <br />
+        <a href="${token.link}">${token.link}</a>`,
+      ),
+    );
   }
 }
