@@ -127,8 +127,8 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
-  @ApiConflictResponse({ description: 'User not activated' })
   @ApiBadRequestResponse({ description: 'Bad credentials' })
+  @ApiConflictResponse({ description: 'User not activated' })
   @ApiOkResponse({ description: 'Successful login' })
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
@@ -136,6 +136,10 @@ export class AuthController {
       GetUserByCredentialsQuery,
       UserResponseDto
     >(new GetUserByCredentialsQuery(body.email, body.password));
+
+    if (user.activatedAt === null) {
+      throw new ConflictException(`User not activated`);
+    }
 
     const res = await this.commandBus.execute<
       IssueAuthTokenCommand,
