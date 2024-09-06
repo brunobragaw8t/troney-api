@@ -12,8 +12,8 @@ import { User } from './users/aggregate/user.entity';
 import { ActivationTokensModule } from './activation-tokens/activation-tokens.module';
 import { ActivationToken } from './activation-tokens/aggregate/activation-token.entity';
 import { MailerModule } from './mailer/mailer.module';
-import { ResetTokensModule } from './reset-tokens/reset-tokens.module';
-import { ResetToken } from './reset-tokens/aggregate/reset-token.entity';
+import { RecoveryTokensModule } from './recovery-tokens/recovery-tokens.module';
+import { RecoveryToken } from './recovery-tokens/aggregate/recovery-token.entity';
 
 @Module({
   imports: [
@@ -48,13 +48,13 @@ import { ResetToken } from './reset-tokens/aggregate/reset-token.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         synchronize: 'true' === configService.get<string>('DB_SYNCHRONIZE'),
-        entities: [User, ActivationToken, ResetToken],
+        entities: [User, ActivationToken, RecoveryToken],
       }),
     }),
     UsersModule,
     AuthModule,
     ActivationTokensModule,
-    ResetTokensModule,
+    RecoveryTokensModule,
     MailerModule,
   ],
   controllers: [AppController],

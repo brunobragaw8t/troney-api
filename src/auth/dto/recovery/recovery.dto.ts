@@ -1,10 +1,10 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'nestjs-zod/z';
 
-export const resetSchema = z
+export const recoverySchema = z
   .object({
     email: z.string(),
   })
   .strict();
 
-export class ResetDto extends createZodDto(resetSchema) {}
+export class RecoveryDto extends createZodDto(recoverySchema) {}

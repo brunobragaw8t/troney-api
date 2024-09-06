@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ResetTokenResponseDto {
+export class RecoveryTokenResponseDto {
   @ApiProperty({ description: 'ID' })
   readonly id: string;
 

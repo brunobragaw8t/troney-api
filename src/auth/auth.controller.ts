@@ -35,9 +35,9 @@ import { GetUserByCredentialsQuery } from 'src/users/queries/get-user-by-credent
 import { LoginResponseDto } from './dto/login/login-response.dto';
 import { IssueAuthTokenCommand } from './commands/issue-auth-token.command';
 import { IssueAuthTokenResponseDto } from './dto/issue-auth-token/issue-auth-token-response.dto';
-import { ResetDto } from './dto/reset/reset.dto';
-import { CreateResetTokenCommand } from 'src/reset-tokens/commands/create-reset-token/create-reset-token.command';
-import { ResetTokenResponseDto } from 'src/reset-tokens/dto/common/reset-token-response.dto';
+import { RecoveryDto } from './dto/recovery/recovery.dto';
+import { CreateRecoveryTokenCommand } from 'src/recovery-tokens/commands/create-recovery-token/create-recovery-token.command';
+import { RecoveryTokenResponseDto } from 'src/recovery-tokens/dto/common/recovery-token-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -154,13 +154,13 @@ export class AuthController {
     };
   }
 
-  @Post('reset')
-  @ApiOperation({ summary: 'Request password reset' })
+  @Post('recover-password')
+  @ApiOperation({ summary: 'Request password recovery' })
   @ApiConflictResponse({ description: 'User not activated' })
   @ApiBadRequestResponse({ description: 'Bad credentials' })
-  @ApiOkResponse({ description: 'Successful login' })
+  @ApiOkResponse({ description: 'Email sent successfully' })
   @HttpCode(HttpStatus.OK)
-  async reset(@Body() body: ResetDto): Promise<void> {
+  async recovery(@Body() body: RecoveryDto): Promise<void> {
     const users = await this.queryBus.execute<GetUsersQuery, UserResponseDto[]>(
       new GetUsersQuery({ email: body.email }),
     );
@@ -170,9 +170,9 @@ export class AuthController {
     }
 
     const token = await this.commandBus.execute<
-      CreateResetTokenCommand,
-      ResetTokenResponseDto
-    >(new CreateResetTokenCommand(users[0].id));
+      CreateRecoveryTokenCommand,
+      RecoveryTokenResponseDto
+    >(new CreateRecoveryTokenCommand(users[0].id));
 
     await this.commandBus.execute<SendEmailCommand>(
       new SendEmailCommand(

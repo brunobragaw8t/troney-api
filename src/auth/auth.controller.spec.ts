@@ -6,6 +6,7 @@ import { ConflictException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let commandBus: CommandBus;
   let queryBus: QueryBus;
 
   beforeEach(async () => {
@@ -23,6 +24,7 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+    commandBus = module.get<CommandBus>(CommandBus);
     queryBus = module.get<QueryBus>(QueryBus);
   });
 
@@ -51,6 +53,28 @@ describe('AuthController', () => {
       await expect(controller.register(registerDto)).rejects.toThrow(
         ConflictException,
       );
+    });
+
+    it('should return a user with 201 on success', async () => {
+      const registerDto: RegisterDto = {
+        email: 'newuser@email.com',
+        password: 'sample',
+        name: 'New User',
+      };
+
+      jest.spyOn(queryBus, 'execute').mockResolvedValueOnce([]);
+
+      const createdUser = {
+        id: '1',
+        email: registerDto.email,
+        name: registerDto.name,
+      };
+
+      jest.spyOn(commandBus, 'execute').mockResolvedValueOnce(createdUser);
+
+      const result = await controller.register(registerDto);
+
+      expect(result).toEqual(createdUser);
     });
   });
 });
