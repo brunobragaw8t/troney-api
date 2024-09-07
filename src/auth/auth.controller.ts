@@ -160,7 +160,7 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Bad credentials' })
   @ApiOkResponse({ description: 'Email sent successfully' })
   @HttpCode(HttpStatus.OK)
-  async recovery(@Body() body: RecoveryDto): Promise<void> {
+  async recoverPassword(@Body() body: RecoveryDto): Promise<void> {
     const users = await this.queryBus.execute<GetUsersQuery, UserResponseDto[]>(
       new GetUsersQuery({ email: body.email }),
     );
