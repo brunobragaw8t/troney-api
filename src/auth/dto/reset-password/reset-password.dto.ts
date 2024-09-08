@@ -2,12 +2,11 @@ import { createZodDto } from 'nestjs-zod';
 import { z } from 'nestjs-zod/z';
 import { passwordSchema } from '../common/password.schema';
 
-export const registerSchema = z
+export const resetPasswordSchema = z
   .object({
-    email: z.string().email(),
+    token: z.string(),
     password: passwordSchema,
-    name: z.string().min(2),
   })
   .strict();
 
-export class RegisterDto extends createZodDto(registerSchema) {}
+export class ResetPasswordDto extends createZodDto(resetPasswordSchema) {}
