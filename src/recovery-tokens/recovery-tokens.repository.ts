@@ -48,4 +48,16 @@ export class RecoveryTokensRepository {
   async findByUser(userId: string): Promise<RecoveryToken | null> {
     return await this.repo.findOneBy({ userId });
   }
+
+  /**
+   * Delete token
+   *
+   * @paran id ID
+   *
+   * @returns True on success, false on failure
+   */
+  async delete(id: string): Promise<boolean> {
+    const res = await this.repo.delete(id);
+    return !!res.affected;
+  }
 }
