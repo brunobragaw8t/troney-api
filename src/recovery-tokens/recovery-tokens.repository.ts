@@ -52,12 +52,23 @@ export class RecoveryTokensRepository {
   /**
    * Delete token
    *
-   * @paran id ID
+   * @param id ID
    *
-   * @returns True on success, false on failure
+   * @returns Recovery token on success, null on failure
    */
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<RecoveryToken | null> {
+    const item = await this.find(id);
+
+    if (item === null) {
+      return null;
+    }
+
     const res = await this.repo.delete(id);
-    return !!res.affected;
+
+    if (!res.affected) {
+      return null;
+    }
+
+    return item;
   }
 }
