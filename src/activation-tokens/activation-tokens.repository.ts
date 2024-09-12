@@ -48,4 +48,27 @@ export class ActivationTokensRepository {
   async findByUser(userId: string): Promise<ActivationToken | null> {
     return await this.repo.findOneBy({ userId });
   }
+
+  /**
+   * Delete token
+   *
+   * @param id ID
+   *
+   * @returns Token on success, null on failure
+   */
+  async delete(id: string): Promise<ActivationToken | null> {
+    const item = await this.find(id);
+
+    if (item === null) {
+      return null;
+    }
+
+    const res = await this.repo.delete(id);
+
+    if (!res.affected) {
+      return null;
+    }
+
+    return item;
+  }
 }
