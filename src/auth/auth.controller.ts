@@ -38,6 +38,7 @@ import { IssueAuthTokenResponseDto } from './dto/issue-auth-token/issue-auth-tok
 import { RecoveryDto } from './dto/recovery/recovery.dto';
 import { CreateRecoveryTokenCommand } from 'src/recovery-tokens/commands/create-recovery-token/create-recovery-token.command';
 import { RecoveryTokenResponseDto } from 'src/recovery-tokens/dto/common/recovery-token-response.dto';
+import { DeleteActivationTokenCommand } from 'src/activation-tokens/commands/delete-activation-token/delete-activation-token.command';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -89,9 +90,17 @@ export class AuthController {
       throw new ConflictException(`User already activated.`);
     }
 
-    return await this.commandBus.execute<ActivateUserCommand, UserResponseDto>(
-      new ActivateUserCommand(user.id),
-    );
+    const activatedUser = await this.commandBus.execute<
+      ActivateUserCommand,
+      UserResponseDto
+    >(new ActivateUserCommand(user.id));
+
+    this.commandBus.execute<
+      DeleteActivationTokenCommand,
+      ActivationTokenResponseDto
+    >(new DeleteActivationTokenCommand(token.id));
+
+    return activatedUser;
   }
 
   @Post('resend-activation')
