@@ -6,6 +6,8 @@ import { RecoveryToken } from './aggregate/recovery-token.entity';
 import { CreateRecoveryTokenHandler } from './commands/create-recovery-token/create-recovery-token.handler';
 import { RecoveryTokensService } from './recovery-tokens.service';
 import { RecoveryTokensRepository } from './recovery-tokens.repository';
+import { GetRecoverTokenHandler } from './queries/get-recovery-token/get-recovery-token.handler';
+import { DeleteRecoveryTokenHandler } from './commands/delete-recovery-token/delete-recovery-token.handler';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { RecoveryTokensRepository } from './recovery-tokens.repository';
     CreateRecoveryTokenHandler,
     RecoveryTokensService,
     RecoveryTokensRepository,
+    GetRecoverTokenHandler,
+    DeleteRecoveryTokenHandler,
   ],
 })
 export class RecoveryTokensModule {}

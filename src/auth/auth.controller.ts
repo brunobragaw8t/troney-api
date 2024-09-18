@@ -38,7 +38,11 @@ import { IssueAuthTokenResponseDto } from './dto/issue-auth-token/issue-auth-tok
 import { RecoveryDto } from './dto/recovery/recovery.dto';
 import { CreateRecoveryTokenCommand } from 'src/recovery-tokens/commands/create-recovery-token/create-recovery-token.command';
 import { RecoveryTokenResponseDto } from 'src/recovery-tokens/dto/common/recovery-token-response.dto';
+import { ResetPasswordDto } from './dto/reset-password/reset-password.dto';
+import { GetRecoveryTokenQuery } from 'src/recovery-tokens/queries/get-recovery-token/get-recovery-token.query';
+import { SetUserPasswordCommand } from 'src/users/commands/set-user-password/set-user-password.command';
 import { DeleteActivationTokenCommand } from 'src/activation-tokens/commands/delete-activation-token/delete-activation-token.command';
+import { DeleteRecoveryTokenCommand } from 'src/recovery-tokens/commands/delete-recovery-token/delete-recovery-token.command';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -193,5 +197,42 @@ export class AuthController {
         <a href="${token.link}">${token.link}</a>`,
       ),
     );
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password' })
+  @ApiBadRequestResponse({ description: 'Password not strong enough' })
+  @ApiNotFoundResponse({ description: 'Recovery token not found' })
+  @ApiConflictResponse({ description: 'User not activated' })
+  @ApiInternalServerErrorResponse({ description: 'Unexpected error' })
+  @ApiOkResponse({ description: 'New password set successfully' })
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(
+    @Body() body: ResetPasswordDto,
+  ): Promise<UserResponseDto> {
+    const token = await this.queryBus.execute<
+      GetRecoveryTokenQuery,
+      RecoveryTokenResponseDto
+    >(new GetRecoveryTokenQuery(body.token));
+
+    const user = await this.queryBus.execute<GetUserQuery, UserResponseDto>(
+      new GetUserQuery(token.userId),
+    );
+
+    if (user.activatedAt === null) {
+      throw new ConflictException('User not activated.');
+    }
+
+    const updatedUser = await this.commandBus.execute<
+      SetUserPasswordCommand,
+      UserResponseDto
+    >(new SetUserPasswordCommand(user.id, body.password));
+
+    this.commandBus.execute<
+      DeleteRecoveryTokenCommand,
+      RecoveryTokenResponseDto
+    >(new DeleteRecoveryTokenCommand(token.id));
+
+    return updatedUser;
   }
 }
