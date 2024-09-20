@@ -24,7 +24,7 @@ registration
 - [x] Create route to login user by issuing a JWT
 - [x] Create password recovery functionality
 - [x] Delete recovery token on successful password reset
-- [ ] Send email when user password changes
+- [x] Send email when user password changes
 - [x] Delete activation token on successful activation
 - [ ] Implement refresh token functionality
 - [ ] Create wallets CRUD

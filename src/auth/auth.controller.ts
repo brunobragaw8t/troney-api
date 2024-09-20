@@ -233,6 +233,16 @@ export class AuthController {
       RecoveryTokenResponseDto
     >(new DeleteRecoveryTokenCommand(token.id));
 
+    this.commandBus.execute<SendEmailCommand>(
+      new SendEmailCommand(
+        updatedUser.email,
+        'Troney | Password reset',
+        `Hi, ${updatedUser.name}.<br />
+        Your password was just changed.<br />
+        If this wasn't your doing, please reach out to us to fix the issue.`,
+      ),
+    );
+
     return updatedUser;
   }
 }
