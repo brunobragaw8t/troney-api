@@ -13,8 +13,6 @@ export class CreateAndSendActivationTokenOnUserCreationHandler
   constructor(private readonly commandBus: CommandBus) {}
 
   async handle(event: UserCreatedEvent) {
-    console.log('reached event handler', event);
-
     const activationToken = await this.commandBus.execute<
       CreateActivationTokenCommand,
       ActivationTokenResponseDto
